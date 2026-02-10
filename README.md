@@ -6,8 +6,6 @@ A human player (“Player”) allocates a fixed number of troops across multiple
 
 The game is implemented in **R using Shiny**.
 
----
-
 ## Core Gameplay
 - There are **5 castles**.
 - Both Player and Colonel must allocate **all 100 troops** across the castles.
@@ -17,11 +15,4 @@ The game is implemented in **R using Shiny**.
   - **Colonel win**
   - **Tie** (neither win)
 
----
 
-## "AI" Opponent Logic
-- The game records the Player’s **past troop allocations** during the session.
-- The Colonel builds a simple Thompson sampling model of the Player’s behavior.
-- Future Colonel strategies are generated based on this learned model, with added randomness to remain unpredictable.
-
----
