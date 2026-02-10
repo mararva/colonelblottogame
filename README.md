@@ -17,13 +17,11 @@ The game is implemented in **R using Shiny**.
   - **Colonel win**
   - **Tie** (neither win)
 
-A scoreboard tracks cumulative wins, losses, ties, and games played.
-
 ---
 
-## AI Opponent Logic
+## "AI" Opponent Logic
 - The game records the Player’s **past troop allocations** during the session.
-- The Colonel builds a simple statistical model of the Player’s behavior (e.g., average allocation per castle).
+- The Colonel builds a simple Thompson sampling model of the Player’s behavior.
 - Future Colonel strategies are generated based on this learned model, with added randomness to remain unpredictable.
 
 ---
