@@ -206,7 +206,7 @@ server <- function(input, output, session) {
     if (played > 0) {
       winrate <- scoreboard$wins / played
       if (winrate > 0.5) {
-        difficulty(difficulty() + 0.2)
+        difficulty(difficulty() + 5)
       }
     }
     
