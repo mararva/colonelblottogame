@@ -1,0 +1,30 @@
+library(tidyverse)
+library(gridExtra)
+
+sol1 <- read.csv("riddler-castles-data/castle-solutions.csv")
+sol1 <- sol1[1:10]
+sol1_long <- sol1 |>
+  pivot_longer(cols = 1:10, names_to ="Castle", values_to = "Value") |>
+  mutate(Castle = gsub("Castle\\.", "Castle ", Castle))
+sol2 <- read.csv("riddler-castles-data/castle-solutions-2.csv")
+sol2 <- sol2[1:10]
+sol3 <- read.csv("riddler-castles-data/castle-solutions-3.csv")
+sol3 <- sol3[1:10]
+sol4 <- read.csv("riddler-castles-data/castle-solutions-4.csv")
+temp_solA <- rbind(sol1, sol2)
+temp_solB <- rbind(sol3, sol4)
+sol5 <- rbind(temp_solA, temp_solB)
+dataset <- c("sol1", "sol2", "sol3", "sol4", "sol5")
+datasetNames <- c("Game 1", "Game 2", "Game 3", "Game 4", "All Games")
+
+sol5_long <- gather(sol5, key = "Castle", value = "Value")
+
+ggplot(sol5_long, aes(x = Value)) +
+  geom_histogram(binwidth = 5, position = "dodge", color = "white", alpha = 0.7) +
+  facet_wrap(~Castle, scales = "fixed", ncol = 2) +
+  xlab("Number of Soldiers Sent") +
+  ylab("")+
+  labs(subtitle = "Proportion of Readers Choosing Soldiers For Each Castle") +
+  theme_minimal()
+
+

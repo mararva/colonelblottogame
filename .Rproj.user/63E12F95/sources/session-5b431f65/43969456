@@ -1,0 +1,26 @@
+{
+    "id": "43969456",
+    "path": "~/R/STAT_331/331project/app.R",
+    "project_path": "app.R",
+    "type": "r_source",
+    "hash": "2327538720",
+    "contents": "",
+    "dirty": false,
+    "created": 1700509417130.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "543,45",
+        "scrollLine": "523"
+    },
+    "folds": "292|35|315|2|\n318|25|330|2|\n332|21|355|2|\n368|11|371|2|\n374|46|376|2|\n378|45|386|2|\n389|47|391|2|\n393|46|401|2|\n404|31|428|2|\n431|33|446|2|\n549|24|551|4|\n554|35|564|2|\n567|37|569|2|\n",
+    "lastKnownWriteTime": 1702605493,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1702605493405,
+    "read_only": false,
+    "read_only_alternatives": []
+}

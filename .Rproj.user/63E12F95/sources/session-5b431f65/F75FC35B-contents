@@ -1,0 +1,46 @@
+player1 <- sample(1:100, 10, replace = TRUE)
+player2 <- sample(1:100, 10, replace = TRUE)
+
+castle_win <- function(player1, player2) {
+  # Initialize an empty vector to store the names of the vector with higher values
+  result_vector <- c(length = length(player1))
+  
+  # Compare values element-wise and assign names accordingly
+  for (i in seq_along(player1)) {
+    if (player1[i] > player2[i]) {
+      result_vector[i] <- "Player 1"
+    } else {
+      result_vector[i] <- "Player 2"
+    }
+  }
+  
+  return(result_vector)
+}
+
+result <- castle_win(player1, player2)
+
+score_calc <- function(result_vector) {
+  # Get unique names in the result vector
+  unique_names <- unique(result_vector)
+  
+  # Initialize a vector to store the scores
+  scores <- numeric(length = length(unique_names))
+  
+  # Calculate the score for each unique name
+  for (i in seq_along(unique_names)) {
+    name <- unique_names[i]
+    positions <- which(result_vector == name)
+    scores[i] <- sum(positions)
+  }
+  
+  # Create a named vector with names and corresponding scores
+  result_scores <- setNames(scores, unique_names)
+  
+  return(result_scores)
+}
+
+# Example usage with the previously obtained result vector
+scores <- score_calc(result)
+
+# Print the scores
+print(scores)

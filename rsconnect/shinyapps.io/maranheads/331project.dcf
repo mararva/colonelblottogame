@@ -1,0 +1,13 @@
+name: 331project
+title: 331project
+username: maranheads
+account: maranheads
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 10597328
+bundleId: 8051350
+url: https://maranheads.shinyapps.io/331project/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: DataVisualization.R|logictesting.R

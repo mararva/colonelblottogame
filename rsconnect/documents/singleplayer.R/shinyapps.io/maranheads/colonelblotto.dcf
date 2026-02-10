@@ -1,0 +1,12 @@
+name: colonelblotto
+title: colonelblotto
+username: maranheads
+account: maranheads
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 16626006
+bundleId: 11560803
+url: https://maranheads.shinyapps.io/colonelblotto/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

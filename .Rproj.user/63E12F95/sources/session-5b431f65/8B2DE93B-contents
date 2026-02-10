@@ -1,0 +1,221 @@
+library(shiny)
+library(shinyWidgets)
+library(tidyverse)
+library(Hmisc)
+library(scales)
+library(shinyjs)
+library(patchwork)
+
+sol1 <- read.csv("riddler-castles-data/castle-solutions.csv")
+sol1 <- sol1[1:10]
+sol1_long <- gather(sol1, key = "Castle", value = "Value")
+sol2 <- read.csv("riddler-castles-data/castle-solutions-2.csv")
+sol2 <- sol2[1:10]
+sol2_long <- gather(sol2, key = "Castle", value = "Value")
+sol3 <- read.csv("riddler-castles-data/castle-solutions-3.csv")
+sol3 <- sol3[1:10]
+sol3_long <- gather(sol3, key = "Castle", value = "Value")
+sol4 <- read.csv("riddler-castles-data/castle-solutions-4.csv")
+sol4_long <- gather(sol4, key = "Castle", value = "Value")
+temp_solA <- rbind(sol1, sol2)
+temp_solB <- rbind(sol3, sol4)
+sol5 <- rbind(temp_solA, temp_solB)
+sol5_long <- gather(sol5, key = "Castle", value = "Value")
+dataset <- c("sol1", "sol2", "sol3", "sol4", "sol5")
+datasetNames <- c("Game 1", "Game 2", "Game 3", "Game 4", "All Games")
+castleOrder <- c("Castle.1", "Castle.6", "Castle.2", "Castle.7", "Castle.3", 
+                 "Castle.8", "Castle.4", "Castle.9", "Castle.5", "Castle.10")
+castleNumericOrder <- c("Castle.1",  "Castle.2", "Castle.3", "Castle.4", "Castle.5", 
+                        "Castle.6", "Castle.7", "Castle.8", "Castle.9", "Castle.10")
+troop <- numeric(10)
+troopCommitted <- sum(troop)
+xlims <- c(0,40)
+ylims <- c(0,0.30)
+
+sidebarPanel2 <- function (..., out = NULL, width = 4) 
+{
+  div(class = paste0("col-sm-", width), 
+      tags$form(class = "well", ...),
+      out
+  )
+}
+
+ui <- fluidPage(
+  useShinyjs(),
+  
+  # Application title
+  titlePanel("The Battle for Riddler Nation!"),
+  
+  # Sidebar with a slider input for data set number
+  sidebarLayout(
+    sidebarPanel2(
+      sliderInput(
+        "set",
+        "Dataset",
+        value = 1,
+        min = 1,
+        max = 5,
+        step = 1
+      ),
+      p("1=Game 1 \n 2=Game 2 \n 3=Game 3 \n 4=Game 4\n 5=All Games"),
+      out = p("The riddle: \n In a distant, war-torn land, there are 10 castles. There are 
+                 two warlords: you and your archenemy, with whom you’re 
+                 competing to collect the most victory points. Each castle has 
+                 its own strategic value for a would-be conqueror. Specifically,
+                 the castles are worth 1, 2, 3, 4, 5, 6, 7, 8, 9, and 10 victory points. 
+                 You and your enemy each have 100 soldiers to distribute, any 
+                 way you like, to fight at any of the 10 castles. Whoever sends
+                 more soldiers to a given castle conquers that castle and wins 
+                 its victory points. If you each send the same number of troops,
+                 you split the points. You don’t know what distribution of 
+                 forces your enemy has chosen until the battles begin. 
+                 Whoever wins the most points wins the war. \n ")
+    ),
+    
+    # Show a plot of the generated distribution
+    mainPanel(
+      plotOutput("distPlot")
+    )
+  )
+)
+
+troopOff <- c(2,2,30,26,1,13,10,8,5,3)
+
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+  
+  # Create reactiveValues to store troop values
+  troopValues <- reactiveValues(
+    troop = numeric(10)
+  )
+  
+  
+  dataToUse <- reactive({
+    if (input$set == 1) {
+      return(sol1_long)
+    } else if (input$set == 2) {
+      return(sol2_long)
+    } else if (input$set == 3) {
+      return(sol3_long)
+    } else if (input$set == 4) {
+      return(sol4_long)
+    } else {
+      return(sol5_long)
+    }
+  })
+  
+  troop <- reactive(
+    c(2,2,30,26,1,13,10,8,5,3)
+  )
+  
+  output$distPlot <- renderPlot({
+      castle_1_data <- dataToUse()[dataToUse()$Castle == "Castle.1", ]
+      castle_2_data <- dataToUse()[dataToUse()$Castle == "Castle.2", ]
+      castle_3_data <- dataToUse()[dataToUse()$Castle == "Castle.3", ]
+      castle_4_data <- dataToUse()[dataToUse()$Castle == "Castle.4", ]
+      castle_5_data <- dataToUse()[dataToUse()$Castle == "Castle.5", ]
+      castle_6_data <- dataToUse()[dataToUse()$Castle == "Castle.6", ]
+      castle_7_data <- dataToUse()[dataToUse()$Castle == "Castle.7", ]
+      castle_8_data <- dataToUse()[dataToUse()$Castle == "Castle.8", ]
+      castle_9_data <- dataToUse()[dataToUse()$Castle == "Castle.9", ]
+      castle_10_data <- dataToUse()[dataToUse()$Castle == "Castle.10", ]
+      
+      p1 <- ggplot(castle_1_data, aes(x = Value, y = ..density..)) +
+        geom_histogram(binwidth = 1, position = "dodge", fill = "orange", alpha = 0.7) +
+        coord_cartesian(xlim = xlims, ylim = ylims) +
+        scale_x_continuous(labels = NULL) +
+        scale_y_continuous(labels = percent) +
+        labs(subtitle = "Castle 1") +
+        geom_vline(aes(xintercept = troopOff[1])) 
+      
+      p2 <- ggplot(castle_2_data, aes(x = Value, y = ..density..)) +
+        geom_histogram(binwidth = 1, position = "dodge", fill = "orange", alpha = 0.7) +
+        coord_cartesian(xlim = xlims, ylim = ylims) +
+        scale_x_continuous(labels = NULL) +
+        scale_y_continuous(labels = NULL) +
+        labs(subtitle = "Castle 2") +
+        geom_vline(aes(xintercept = troopOff[2]))
+      
+      p3 <- ggplot(castle_3_data, aes(x = Value, y = ..density..)) +
+        geom_histogram(binwidth = 1, position = "dodge", fill = "orange", alpha = 0.7) +
+        coord_cartesian(xlim = xlims, ylim = ylims) +
+        scale_x_continuous(labels = NULL) +
+        scale_y_continuous(labels = percent) +
+        labs(subtitle = "Castle 3") +
+        geom_vline(aes(xintercept = troopOff[3]))
+      
+      p4 <- ggplot(castle_4_data, aes(x = Value, y = ..density..)) +
+        geom_histogram(binwidth = 1, position = "dodge", fill = "orange", alpha = 0.7) +
+        coord_cartesian(xlim = xlims, ylim = ylims) +
+        scale_x_continuous(labels = NULL) +
+        scale_y_continuous(labels = NULL) +
+        labs(subtitle = "Castle 4") +
+        geom_vline(aes(xintercept = troopOff[4]))
+      
+      p5 <- ggplot(castle_5_data, aes(x = Value, y = ..density..)) +
+        geom_histogram(binwidth = 1, position = "dodge", fill = "orange", alpha = 0.7) +
+        coord_cartesian(xlim = xlims, ylim = ylims) +
+        scale_x_continuous(labels = NULL) +
+        scale_y_continuous(labels = percent) +
+        labs(subtitle = "Castle 5") +
+        geom_vline(aes(xintercept = troopOff[5]))
+      
+      p6 <- ggplot(castle_6_data, aes(x = Value, y = ..density..)) +
+        geom_histogram(binwidth = 1, position = "dodge", fill = "orange", alpha = 0.7) +
+        coord_cartesian(xlim = xlims, ylim = ylims) +
+        scale_x_continuous(labels = NULL) +
+        scale_y_continuous(labels = NULL) +
+        labs(subtitle = "Castle 6") +
+        geom_vline(aes(xintercept = troopOff[6]))
+      
+      p7 <- ggplot(castle_7_data, aes(x = Value, y = ..density..)) +
+        geom_histogram(binwidth = 1, position = "dodge", fill = "orange", alpha = 0.7) +
+        coord_cartesian(xlim = xlims, ylim = ylims) +
+        scale_x_continuous(labels = NULL) +
+        scale_y_continuous(labels = percent) +
+        labs(subtitle = "Castle 7") +
+        geom_vline(aes(xintercept = troopOff[7]))
+      
+      p8 <- ggplot(castle_8_data, aes(x = Value, y = ..density..)) +
+        geom_histogram(binwidth = 1, position = "dodge", fill = "orange", alpha = 0.7) +
+        coord_cartesian(xlim = xlims, ylim = ylims) +
+        scale_x_continuous(labels = NULL) +
+        scale_y_continuous(labels = NULL) +
+        labs(subtitle = "Castle 8") +
+        geom_vline(aes(xintercept = troopOff[8]))
+      
+      p9 <- ggplot(castle_9_data, aes(x = Value, y = ..density..)) +
+        geom_histogram(binwidth = 1, position = "dodge", fill = "orange", alpha = 0.7) +
+        coord_cartesian(xlim = xlims, ylim = ylims) +
+        scale_y_continuous(labels = percent) +
+        labs(subtitle = "Castle 9") +
+        geom_vline(aes(xintercept = troopOff[9]))
+      
+      p10 <- ggplot(castle_10_data, aes(x = Value, y = ..density..)) +
+        geom_histogram(binwidth = 1, position = "dodge", fill = "orange", alpha = 0.7) +
+        coord_cartesian(xlim = xlims, ylim = ylims) +
+        scale_y_continuous(labels = NULL) +
+        labs(subtitle = "Castle 10") +
+        geom_vline(aes(xintercept = troopOff[10]))
+      
+      patchwork <- wrap_plots((p1 | p2) / (p3 | p4) / (p5 | p6) / (p7 | p8) / (p9 | p10)) & 
+        coord_cartesian(xlim = xlims, ylim = ylims) &
+        theme_minimal() &
+        xlab("") & ylab("") 
+      
+      patchwork +  
+        plot_layout(heights = c(100, 1, 1, 1, 1), widths = c(25, 1), guides = "keep") &
+        plot_annotation(
+        title = '',
+        subtitle = 'Proportion of Readers Choosing Soldiers For Each Castle',
+        caption = 'Number of Soldiers Sent'
+      )
+    }
+  )
+  
+}
+# Run the application 
+
+shinyApp(ui = ui, server = server)
+
+
